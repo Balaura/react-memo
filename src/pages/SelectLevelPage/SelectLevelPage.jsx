@@ -1,9 +1,14 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./SelectLevelPage.module.css";
-import { useState } from "react";
+import { useGameContext } from "../../context/GameContext";
 
 export function SelectLevelPage() {
-  const [isSimpleMode, setIsSimpleMode] = useState(false);
+  const { isSimpleMode, setIsSimpleMode } = useGameContext();
+  const navigate = useNavigate();
+
+  const handleLevelSelect = pairsCount => {
+    navigate(`/game/${pairsCount}${isSimpleMode ? "?simple=true" : ""}`);
+  };
 
   return (
     <div className={styles.container}>
@@ -11,19 +16,19 @@ export function SelectLevelPage() {
         <h1 className={styles.title}>Выбери сложность</h1>
         <ul className={styles.levels}>
           <li className={styles.level}>
-            <Link className={styles.levelLink} to={`/game/3${isSimpleMode ? "?simple=true" : ""}`}>
+            <button className={styles.levelLink} onClick={() => handleLevelSelect(3)}>
               1
-            </Link>
+            </button>
           </li>
           <li className={styles.level}>
-            <Link className={styles.levelLink} to={`/game/6${isSimpleMode ? "?simple=true" : ""}`}>
+            <button className={styles.levelLink} onClick={() => handleLevelSelect(6)}>
               2
-            </Link>
+            </button>
           </li>
           <li className={styles.level}>
-            <Link className={styles.levelLink} to={`/game/9${isSimpleMode ? "?simple=true" : ""}`}>
+            <button className={styles.levelLink} onClick={() => handleLevelSelect(9)}>
               3
-            </Link>
+            </button>
           </li>
         </ul>
         <div className={styles.checkbox}>
