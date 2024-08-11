@@ -38,3 +38,14 @@
   text-align: center;
   text-decoration: none;
 }
+
+.loading,
+.error {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+}
+
+.error {
+  color: red;
+}

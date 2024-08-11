@@ -49,3 +49,14 @@
 
   margin-bottom: 40px;
 }
+
+.loading,
+.error {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+}
+
+.error {
+  color: red;
+}

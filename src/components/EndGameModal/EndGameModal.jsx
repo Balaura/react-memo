@@ -4,18 +4,47 @@ import { Button } from "../Button/Button";
 import deadImageUrl from "./images/dead.png";
 import celebrationImageUrl from "./images/celebration.png";
 
+const API_URL = "https://wedev-api.sky.pro/api/leaderboard";
+
 export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, onClick, onSaveScore }) {
   const [playerName, setPlayerName] = useState("");
   const [showNameInput, setShowNameInput] = useState(isWon);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
 
   const title = isWon ? "Вы победили!" : "Вы проиграли!";
   const imgSrc = isWon ? celebrationImageUrl : deadImageUrl;
   const imgAlt = isWon ? "celebration emoji" : "dead emoji";
 
-  const handleSaveScore = () => {
-    if (playerName.trim()) {
-      onSaveScore(playerName, gameDurationMinutes * 60 + gameDurationSeconds);
-      setShowNameInput(false);
+  const handleSaveScore = async () => {
+    if (playerName.trim() || !isWon) {
+      setIsSaving(true);
+      setSaveError(null);
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: playerName.trim() || "Пользователь",
+            time: gameDurationMinutes * 60 + gameDurationSeconds,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        onSaveScore(data.leaders);
+        setShowNameInput(false);
+      } catch (e) {
+        setSaveError("Произошла ошибка при сохранении результата. Пожалуйста, попробуйте позже.");
+        console.error("Ошибка при сохранении результата:", e);
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
@@ -34,8 +63,12 @@ export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, 
             placeholder="Введите ваше имя"
             value={playerName}
             onChange={e => setPlayerName(e.target.value)}
+            disabled={isSaving}
           />
-          <Button onClick={handleSaveScore}>Сохранить результат</Button>
+          <Button onClick={handleSaveScore} disabled={isSaving}>
+            {isSaving ? "Сохранение..." : "Сохранить результат"}
+          </Button>
+          {saveError && <p className={styles.error}>{saveError}</p>}
         </div>
       )}
       {!showNameInput && <Button onClick={onClick}>Начать сначала</Button>}

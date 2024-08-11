@@ -3,20 +3,42 @@ import { Link } from "react-router-dom";
 import styles from "./LeaderboardPage.module.css";
 import { Button } from "../../components/Button/Button";
 
+const API_URL = "https://wedev-api.sky.pro/api/leaderboard";
+
 export function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Здесь должен быть запрос к API для получения данных лидерборда
-    // Для примера используем моковые данные
-    const mockData = [
-      { name: "Игрок 1", time: "00:30" },
-      { name: "Игрок 2", time: "00:45" },
-      { name: "Игрок 3", time: "01:00" },
-      // ... добавьте еще записей до 10
-    ];
-    setLeaderboard(mockData);
+    fetchLeaderboard();
   }, []);
+
+  const fetchLeaderboard = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(API_URL);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setLeaderboard(data.leaders);
+    } catch (e) {
+      setError("Произошла ошибка при загрузке данных. Пожалуйста, попробуйте позже.");
+      console.error("Ошибка при загрузке лидерборда:", e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return <div className={styles.loading}>Загрузка...</div>;
+  }
+
+  if (error) {
+    return <div className={styles.error}>{error}</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -26,12 +48,12 @@ export function LeaderboardPage() {
           <tr>
             <th>Место</th>
             <th>Имя</th>
-            <th>Время</th>
+            <th>Время (сек)</th>
           </tr>
         </thead>
         <tbody>
           {leaderboard.map((player, index) => (
-            <tr key={index}>
+            <tr key={player.id}>
               <td>{index + 1}</td>
               <td>{player.name}</td>
               <td>{player.time}</td>
