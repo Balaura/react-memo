@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import styles from "./SelectLevelPage.module.css";
 import { useGameContext } from "../../context/GameContext";
 
@@ -40,6 +40,9 @@ export function SelectLevelPage() {
           />
           <label htmlFor="simpleMode">Упрощенный режим (3 ошибки)</label>
         </div>
+        <Link to="/leaderboard" className={styles.leaderboardLink}>
+          Лидерборд
+        </Link>
       </div>
     </div>
   );

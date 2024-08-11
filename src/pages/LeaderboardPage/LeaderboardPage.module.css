@@ -1,0 +1,40 @@
+.container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #c2f5ff;
+  border-radius: 12px;
+}
+
+.title {
+  color: #004980;
+  text-align: center;
+  font-family: StratosSkyeng, sans-serif;
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+.leaderboard {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.leaderboard th,
+.leaderboard td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #004980;
+}
+
+.leaderboard th {
+  background-color: #7ac100;
+  color: white;
+}
+
+.backLink {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}

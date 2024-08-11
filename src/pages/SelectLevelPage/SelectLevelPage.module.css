@@ -71,3 +71,15 @@
   background-color: #e0e0e0;
   border-radius: 12px;
 }
+
+.leaderboardLink {
+  margin-top: 20px;
+  color: #0080c1;
+  text-decoration: none;
+  font-family: StratosSkyeng, sans-serif;
+  font-size: 18px;
+}
+
+.leaderboardLink:hover {
+  text-decoration: underline;
+}
