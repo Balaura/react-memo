@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./LeaderboardPage.module.css";
-import { Button } from "../../components/Button/Button";
 
 const API_URL = "https://wedev-api.sky.pro/api/leaderboard";
 
@@ -9,6 +8,7 @@ export function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchLeaderboard();
@@ -42,28 +42,36 @@ export function LeaderboardPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Лидерборд</h1>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Лидерборд</h1>
+        <button onClick={() => navigate("/")} className={styles.startButton}>
+          Начать игру
+        </button>
+      </div>
       <table className={styles.leaderboard}>
         <thead>
           <tr>
-            <th>Место</th>
-            <th>Имя</th>
-            <th>Время (сек)</th>
+            <th>Позиция</th>
+            <th>Пользователь</th>
+            <th>Время</th>
           </tr>
         </thead>
         <tbody>
           {leaderboard.map((player, index) => (
             <tr key={player.id}>
-              <td>{index + 1}</td>
+              <td># {index + 1}</td>
               <td>{player.name}</td>
-              <td>{player.time}</td>
+              <td>{formatTime(player.time)}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <Link to="/" className={styles.backLink}>
-        <Button>Вернуться на главную</Button>
-      </Link>
     </div>
   );
+}
+
+function formatTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
 }

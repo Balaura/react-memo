@@ -25,13 +25,13 @@ export function SelectLevelPage() {
         <h1 className={styles.title}>Выбери сложность</h1>
         <div className={styles.levels}>
           {[3, 6, 9].map((level, index) => (
-            <button
+            <Button
               key={level}
               className={`${styles.levelButton} ${selectedLevel === level ? styles.selected : ""}`}
               onClick={() => handleLevelSelect(level)}
             >
               {index + 1}
-            </button>
+            </Button>
           ))}
         </div>
         <div className={styles.checkbox}>

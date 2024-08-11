@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { generateDeck } from "../../utils/cards";
 import styles from "./Cards.module.css";
 import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
+import { LeaderboardModal } from "../../components/LeaderboardModal/LeaderboardModal";
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
 import { useGameContext } from "../../context/GameContext";
@@ -11,6 +12,8 @@ const STATUS_LOST = "STATUS_LOST";
 const STATUS_WON = "STATUS_WON";
 const STATUS_IN_PROGRESS = "STATUS_IN_PROGRESS";
 const STATUS_PREVIEW = "STATUS_PREVIEW";
+
+const API_URL = "https://wedev-api.sky.pro/api/leaderboard";
 
 function getTimerValue(startDate, endDate) {
   if (!startDate && !endDate) {
@@ -31,11 +34,9 @@ function getTimerValue(startDate, endDate) {
   };
 }
 
-/**
- * Основной компонент игры, внутри него находится вся игровая механика и логика.
+/** * Основной компонент игры, внутри него находится вся игровая механика и логика.
  * pairsCount - сколько пар будет в игре
- * previewSeconds - сколько секунд пользователь будет видеть все карты открытыми до начала игры
- */
+ * previewSeconds - сколько секунд пользователь будет видеть все карты открытыми до начала игры */
 export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const [cards, setCards] = useState([]);
   const [status, setStatus] = useState(STATUS_PREVIEW);
@@ -44,10 +45,14 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const [timer, setTimer] = useState({ seconds: 0, minutes: 0 });
   const { isSimpleMode } = useGameContext();
   const [mistakes, setMistakes] = useState(0);
+  const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
 
   function finishGame(status = STATUS_LOST) {
     setGameEndDate(new Date());
     setStatus(status);
+    if (status === STATUS_WON && pairsCount === 9) {
+      setShowLeaderboardModal(true);
+    }
   }
 
   function startGame() {
@@ -65,27 +70,50 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setTimer(getTimerValue(null, null));
     setStatus(STATUS_PREVIEW);
     setMistakes(0);
+    setShowLeaderboardModal(false);
   }
 
-  /**
-   * Обработка основного действия в игре - открытие карты.
+  const handlePlayAgain = () => {
+    resetGame();
+  };
+
+  const handleSaveLeaderboard = async name => {
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        // Я ПОТРАТИЛА ДВА ДНЯ НА ЭТО. КАКОГО ФИГА У ВАС НЕ РАБОТАЕТ НОРМАЛЬНО БЭКЭНД?!?!?!
+        // headers: {
+        //   "Content-Type": "application/json",
+        // },
+        body: JSON.stringify({
+          name,
+          time: timer.minutes * 60 + timer.seconds,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      setShowLeaderboardModal(false);
+    } catch (error) {
+      console.error("Ошибка при сохранении результата:", error);
+    }
+  };
+
+  /** * Обработка основного действия в игре - открытие карты.
    * После открытия карты игра может пепереходит в следующие состояния
    * - "Игрок выиграл", если на поле открыты все карты
    * - "Игрок проиграл", если на поле есть две открытые карты без пары
-   * - "Игра продолжается", если не случилось первых двух условий
-   */
+   * - "Игра продолжается", если не случилось первых двух условий */
   const openCard = clickedCard => {
     if (clickedCard.open) {
       return;
     }
-
     const nextCards = cards.map(card => {
       if (card.id !== clickedCard.id) {
         return card;
       }
       return { ...card, open: true };
     });
-
     setCards(nextCards);
 
     const isPlayerWon = nextCards.every(card => card.open);
@@ -168,12 +196,12 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             <>
               <div className={styles.timerValue}>
                 <div className={styles.timerDescription}>min</div>
-                <div>{timer.minutes.toString().padStart("2", "0")}</div>
+                <div>{timer.minutes.toString().padStart(2, "0")}</div>
               </div>
               .
               <div className={styles.timerValue}>
                 <div className={styles.timerDescription}>sec</div>
-                <div>{timer.seconds.toString().padStart("2", "0")}</div>
+                <div>{timer.seconds.toString().padStart(2, "0")}</div>
               </div>
             </>
           )}
@@ -194,16 +222,20 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
           />
         ))}
       </div>
-      {isGameEnded ? (
-        <div className={styles.modalContainer}>
-          <EndGameModal
-            isWon={status === STATUS_WON}
-            gameDurationSeconds={timer.seconds}
-            gameDurationMinutes={timer.minutes}
-            onClick={resetGame}
-          />
-        </div>
-      ) : null}
+      {isGameEnded && !showLeaderboardModal && (
+        <EndGameModal
+          isWon={status === STATUS_WON}
+          time={timer.minutes * 60 + timer.seconds}
+          onPlayAgain={handlePlayAgain}
+        />
+      )}
+      {showLeaderboardModal && (
+        <LeaderboardModal
+          time={timer.minutes * 60 + timer.seconds}
+          onSave={handleSaveLeaderboard}
+          onPlayAgain={handlePlayAgain}
+        />
+      )}
     </div>
   );
 }

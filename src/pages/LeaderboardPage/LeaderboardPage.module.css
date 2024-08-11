@@ -1,42 +1,74 @@
 .container {
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #c2f5ff;
-  border-radius: 12px;
+  background-color: #004980;
+  color: white;
+  font-family: StratosSkyeng, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .title {
-  color: #004980;
-  text-align: center;
-  font-family: StratosSkyeng, sans-serif;
-  font-size: 40px;
-  margin-bottom: 20px;
+  color: white;
+  font-size: 24px;
+  margin: 0;
+  font-family: Roboto;
+  line-height: 32px;
+  font-weight: 400;
+}
+
+.startButton {
+  padding: 10px 20px;
+  background-color: #7ac100;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.startButton:hover {
+  background-color: #6cae00;
 }
 
 .leaderboard {
   width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
-
-.leaderboard th,
-.leaderboard td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #004980;
+  border-collapse: separate;
+  border-spacing: 0 10px;
 }
 
 .leaderboard th {
-  background-color: #7ac100;
-  color: white;
+  background-color: white;
+  color: #999999;
+  padding: 10px;
+  text-align: left;
+  font-weight: normal;
+  font-family: Poppins, sans-serif;
 }
 
-.backLink {
-  display: block;
-  text-align: center;
-  text-decoration: none;
+.leaderboard td {
+  background-color: white;
+  color: #004980;
+  padding: 10px;
+}
+
+.leaderboard tr th:first-child,
+.leaderboard tr td:first-child {
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+.leaderboard tr th:last-child,
+.leaderboard tr td:last-child {
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
 .loading,
@@ -47,5 +79,5 @@
 }
 
 .error {
-  color: red;
+  color: #ff6b6b;
 }

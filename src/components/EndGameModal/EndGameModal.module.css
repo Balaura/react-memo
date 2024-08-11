@@ -1,12 +1,12 @@
 .modal {
   width: 480px;
-  height: 459px;
+  padding: 50px;
   border-radius: 12px;
-  background: #c2f5ff;
+  background-color: #c2f5ff;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  text-align: center;
 }
 
 .image {
@@ -17,36 +17,24 @@
 
 .title {
   color: #004980;
-  font-variant-numeric: lining-nums proportional-nums;
-  font-family: StratosSkyeng;
+  font-family: StratosSkyeng, sans-serif;
   font-size: 40px;
-  font-style: normal;
   font-weight: 400;
-  line-height: 48px;
-
   margin-bottom: 28px;
 }
 
 .description {
-  color: #000;
-  font-variant-numeric: lining-nums proportional-nums;
-  font-family: StratosSkyeng;
+  color: #000000;
+  font-family: StratosSkyeng, sans-serif;
   font-size: 24px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 32px;
-
   margin-bottom: 10px;
 }
 
 .time {
-  color: #000;
-  font-family: StratosSkyeng;
+  color: #000000;
+  font-family: StratosSkyeng, sans-serif;
   font-size: 64px;
-  font-style: normal;
   font-weight: 400;
-  line-height: 72px;
-
   margin-bottom: 40px;
 }
 
@@ -59,4 +47,228 @@
 
 .error {
   color: red;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  width: 480px;
+  padding: 50px;
+  border-radius: 12px;
+  background-color: #c2f5ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.image {
+  width: 96px;
+  height: 96px;
+  margin-bottom: 20px;
+}
+
+.title {
+  color: #004980;
+  font-family: StratosSkyeng, sans-serif;
+  font-size: 40px;
+  font-weight: 400;
+  margin-bottom: 28px;
+}
+
+.nameInput {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #0080c1;
+  border-radius: 6px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.description {
+  color: #000000;
+  font-family: StratosSkyeng, sans-serif;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.time {
+  color: #000000;
+  font-family: StratosSkyeng, sans-serif;
+  font-size: 64px;
+  font-weight: 400;
+  margin-bottom: 40px;
+}
+
+.playAgainButton {
+  width: 246px;
+  height: 50px;
+  margin-bottom: 20px;
+}
+
+.leaderboardLink {
+  font-family: StratosSkyeng, sans-serif;
+  font-size: 18px;
+  color: #0080c1;
+  text-decoration: none;
+}
+
+.leaderboardLink:hover {
+  text-decoration: underline;
+}
+
+.nameInput {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #0080c1;
+  border-radius: 6px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.saveButton,
+.playAgainButton {
+  width: 246px;
+  height: 50px;
+  margin-bottom: 20px;
+  background-color: #7ac100;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.saveButton:hover,
+.playAgainButton:hover {
+  background-color: #6cae00;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  width: 480px;
+  padding: 50px;
+  border-radius: 12px;
+  background-color: #c2f5ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  width: 480px;
+  padding: 50px;
+  border-radius: 12px;
+  background-color: #c2f5ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.image {
+  width: 96px;
+  height: 96px;
+  margin-bottom: 20px;
+}
+
+.title {
+  color: #004980;
+  font-family: StratosSkyeng, sans-serif;
+  font-size: 40px;
+  font-weight: 400;
+  margin-bottom: 28px;
+}
+
+.playerName {
+  width: 276px;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #0080c1;
+  border-radius: 6px;
+  font-size: 18px;
+  text-align: center;
+  color: #999999;
+  background-color: white;
+  font-family: roboto;
+}
+
+.description {
+  color: #000000;
+  font-family: StratosSkyeng, sans-serif;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.time {
+  color: #000000;
+  font-family: StratosSkyeng, sans-serif;
+  font-size: 64px;
+  font-weight: 400;
+  margin-bottom: 40px;
+}
+
+.playAgainButton {
+  width: 246px;
+  height: 50px;
+  margin-bottom: 20px;
+  background-color: #7ac100;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.playAgainButton:hover {
+  background-color: #6cae00;
+}
+
+.leaderboardLink {
+  font-family: StratosSkyeng, sans-serif;
+  font-size: 18px;
+  color: #0080c1;
+  text-decoration: none;
+}
+
+.leaderboardLink:hover {
+  text-decoration: underline;
 }
