@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./LeaderboardPage.module.css";
 
-const API_URL = "https://wedev-api.sky.pro/api/leaderboard";
+const API_URL = "https://wedev-api.sky.pro/api/v2/leaderboard";
 
+const ACHIEVEMENTS = {
+  1: "Без суперсил",
+  2: "Сложный режим",
+};
 export function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,14 +58,22 @@ export function LeaderboardPage() {
             <th>Позиция</th>
             <th>Пользователь</th>
             <th>Время</th>
+            <th>Достижения</th>
           </tr>
         </thead>
         <tbody>
           {leaderboard.map((player, index) => (
             <tr key={player.id}>
-              <td># {index + 1}</td>
+              <td>#{index + 1}</td>
               <td>{player.name}</td>
               <td>{formatTime(player.time)}</td>
+              <td>
+                {player.achievements.map(achievementId => (
+                  <span key={achievementId} className={styles.achievement}>
+                    {ACHIEVEMENTS[achievementId]}
+                  </span>
+                ))}
+              </td>
             </tr>
           ))}
         </tbody>

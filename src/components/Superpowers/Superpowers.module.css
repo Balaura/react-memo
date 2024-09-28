@@ -1,0 +1,16 @@
+.superpowers {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.superpowerButton {
+  width: auto;
+  padding: 0 20px;
+}
+
+.superpowerButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

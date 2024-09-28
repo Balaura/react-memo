@@ -81,3 +81,13 @@
 .error {
   color: #ff6b6b;
 }
+
+.achievement {
+  display: inline-block;
+  padding: 2px 6px;
+  margin-right: 5px;
+  background-color: #7ac100;
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+}

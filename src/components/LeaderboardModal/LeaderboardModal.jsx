@@ -3,12 +3,21 @@ import { Link } from "react-router-dom";
 import styles from "./LeaderboardModal.module.css";
 import { Button } from "../Button/Button";
 import celebrationImageUrl from "./images/celebration.png";
+import { useGameContext } from "../../context/GameContext";
 
-export function LeaderboardModal({ time, onSave, onPlayAgain }) {
+export function LeaderboardModal({ time, onSave, onPlayAgain, usedSuperpowers }) {
   const [name, setName] = useState("");
+  const { isSimpleMode } = useGameContext();
 
   const handleSave = () => {
-    onSave(name || "Пользователь");
+    const achievements = [];
+    if (!usedSuperpowers.revelation && !usedSuperpowers.alohomora) {
+      achievements.push(1); // Без суперсил
+    }
+    if (!isSimpleMode) {
+      achievements.push(2); // Сложный режим
+    }
+    onSave(name || "Пользователь", achievements);
   };
 
   return (

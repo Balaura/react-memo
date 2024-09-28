@@ -7,6 +7,7 @@ import { LeaderboardModal } from "../../components/LeaderboardModal/LeaderboardM
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
 import { useGameContext } from "../../context/GameContext";
+import { Superpowers } from "../Superpowers/Superpowers";
 
 const STATUS_LOST = "STATUS_LOST";
 const STATUS_WON = "STATUS_WON";
@@ -77,17 +78,17 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     resetGame();
   };
 
-  const handleSaveLeaderboard = async name => {
+  const handleSaveLeaderboard = async (name, achievements) => {
     try {
       const response = await fetch(API_URL, {
         method: "POST",
-        // Я ПОТРАТИЛА ДВА ДНЯ НА ЭТО. КАКОГО ФИГА У ВАС НЕ РАБОТАЕТ НОРМАЛЬНО БЭКЭНД?!?!?!
         // headers: {
         //   "Content-Type": "application/json",
         // },
         body: JSON.stringify({
           name,
           time: timer.minutes * 60 + timer.seconds,
+          achievements,
         }),
       });
       if (!response.ok) {
@@ -183,6 +184,44 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     };
   }, [gameStartDate, gameEndDate]);
 
+  const { usedSuperpowers, setUsedSuperpowers } = useGameContext();
+
+  const handleUseSuperpower = superpower => {
+    if (usedSuperpowers[superpower] || status !== STATUS_IN_PROGRESS) return;
+
+    setUsedSuperpowers(prev => ({ ...prev, [superpower]: true }));
+
+    if (superpower === "revelation") {
+      setGameStartDate(prevStartDate => new Date(prevStartDate.getTime() + 5000));
+      const revealedCards = cards.map(card => ({ ...card, open: true }));
+      setCards(revealedCards);
+      setTimeout(() => {
+        setCards(prevCards => prevCards.map(card => ({ ...card, open: false })));
+        setGameStartDate(prevStartDate => new Date(prevStartDate.getTime() - 5000));
+      }, 5000);
+    } else if (superpower === "alohomora") {
+      const closedPairs = cards
+        .filter(card => !card.open)
+        .reduce((acc, card) => {
+          const pair = acc.find(p => p[0].suit === card.suit && p[0].rank === card.rank);
+          if (pair) {
+            pair.push(card);
+          } else {
+            acc.push([card]);
+          }
+          return acc;
+        }, [])
+        .filter(pair => pair.length === 2);
+
+      if (closedPairs.length > 0) {
+        const randomPair = closedPairs[Math.floor(Math.random() * closedPairs.length)];
+        setCards(prevCards =>
+          prevCards.map(card => (randomPair.some(p => p.id === card.id) ? { ...card, open: true } : card)),
+        );
+      }
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -211,6 +250,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         )}
         {status === STATUS_IN_PROGRESS ? <Button onClick={resetGame}>Начать заново</Button> : null}
       </div>
+      <Superpowers onUseSuperpower={handleUseSuperpower} usedSuperpowers={usedSuperpowers} />
       <div className={styles.cards}>
         {cards.map(card => (
           <Card
@@ -234,6 +274,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
           time={timer.minutes * 60 + timer.seconds}
           onSave={handleSaveLeaderboard}
           onPlayAgain={handlePlayAgain}
+          usedSuperpowers={usedSuperpowers}
         />
       )}
     </div>
