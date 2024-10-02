@@ -14,30 +14,21 @@ const STATUS_WON = "STATUS_WON";
 const STATUS_IN_PROGRESS = "STATUS_IN_PROGRESS";
 const STATUS_PREVIEW = "STATUS_PREVIEW";
 
-const API_URL = "https://wedev-api.sky.pro/api/leaderboard";
+const API_URL = "https://wedev-api.sky.pro/api/v2/leaderboard";
 
 function getTimerValue(startDate, endDate) {
   if (!startDate && !endDate) {
-    return {
-      minutes: 0,
-      seconds: 0,
-    };
+    return { minutes: 0, seconds: 0 };
   }
   if (endDate === null) {
     endDate = new Date();
   }
-  const diffInSecconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
-  const minutes = Math.floor(diffInSecconds / 60);
-  const seconds = diffInSecconds % 60;
-  return {
-    minutes,
-    seconds,
-  };
+  const diffInSeconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+  const minutes = Math.floor(diffInSeconds / 60);
+  const seconds = diffInSeconds % 60;
+  return { minutes, seconds };
 }
 
-/** * Основной компонент игры, внутри него находится вся игровая механика и логика.
- * pairsCount - сколько пар будет в игре
- * previewSeconds - сколько секунд пользователь будет видеть все карты открытыми до начала игры */
 export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const [cards, setCards] = useState([]);
   const [status, setStatus] = useState(STATUS_PREVIEW);
@@ -47,6 +38,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const { isSimpleMode } = useGameContext();
   const [mistakes, setMistakes] = useState(0);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
+  const [usedSuperpowers, setUsedSuperpowers] = useState({
+    revelation: false,
+    alohomora: false,
+  });
 
   function finishGame(status = STATUS_LOST) {
     setGameEndDate(new Date());
@@ -72,6 +67,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setStatus(STATUS_PREVIEW);
     setMistakes(0);
     setShowLeaderboardModal(false);
+    setUsedSuperpowers({ revelation: false, alohomora: false });
   }
 
   const handlePlayAgain = () => {
@@ -82,9 +78,9 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     try {
       const response = await fetch(API_URL, {
         method: "POST",
-        // headers: {
-        //   "Content-Type": "application/json",
-        // },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           name,
           time: timer.minutes * 60 + timer.seconds,
@@ -100,11 +96,6 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     }
   };
 
-  /** * Обработка основного действия в игре - открытие карты.
-   * После открытия карты игра может пепереходит в следующие состояния
-   * - "Игрок выиграл", если на поле открыты все карты
-   * - "Игрок проиграл", если на поле есть две открытые карты без пары
-   * - "Игра продолжается", если не случилось первых двух условий */
   const openCard = clickedCard => {
     if (clickedCard.open) {
       return;
@@ -116,13 +107,11 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       return { ...card, open: true };
     });
     setCards(nextCards);
-
     const isPlayerWon = nextCards.every(card => card.open);
     if (isPlayerWon) {
       finishGame(STATUS_WON);
       return;
     }
-
     const openCards = nextCards.filter(card => card.open);
     const openCardsWithoutPair = openCards.filter(card => {
       const sameCards = openCards.filter(openCard => card.suit === openCard.suit && card.rank === openCard.rank);
@@ -131,7 +120,6 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       }
       return false;
     });
-
     const playerMadeMistake = openCardsWithoutPair.length >= 2;
     if (playerMadeMistake) {
       if (isSimpleMode) {
@@ -165,7 +153,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       return;
     }
     setCards(() => {
-      return shuffle(generateDeck(pairsCount, 10));
+      return shuffle(generateDeck(pairsCount));
     });
     const timerId = setTimeout(() => {
       startGame();
@@ -184,20 +172,24 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     };
   }, [gameStartDate, gameEndDate]);
 
-  const { usedSuperpowers, setUsedSuperpowers } = useGameContext();
+  const [isSuperpowerActive, setIsSuperpowerActive] = useState(false);
 
   const handleUseSuperpower = superpower => {
-    if (usedSuperpowers[superpower] || status !== STATUS_IN_PROGRESS) return;
-
+    if (usedSuperpowers[superpower] || status !== STATUS_IN_PROGRESS || isSuperpowerActive) return;
+    setIsSuperpowerActive(true);
     setUsedSuperpowers(prev => ({ ...prev, [superpower]: true }));
 
     if (superpower === "revelation") {
+      const revealStartTime = new Date();
       setGameStartDate(prevStartDate => new Date(prevStartDate.getTime() + 5000));
       const revealedCards = cards.map(card => ({ ...card, open: true }));
       setCards(revealedCards);
       setTimeout(() => {
         setCards(prevCards => prevCards.map(card => ({ ...card, open: false })));
-        setGameStartDate(prevStartDate => new Date(prevStartDate.getTime() - 5000));
+        const revealEndTime = new Date();
+        const revealDuration = revealEndTime - revealStartTime;
+        setGameStartDate(prevStartDate => new Date(prevStartDate.getTime() + revealDuration));
+        setIsSuperpowerActive(false);
       }, 5000);
     } else if (superpower === "alohomora") {
       const closedPairs = cards
@@ -212,13 +204,13 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
           return acc;
         }, [])
         .filter(pair => pair.length === 2);
-
       if (closedPairs.length > 0) {
         const randomPair = closedPairs[Math.floor(Math.random() * closedPairs.length)];
         setCards(prevCards =>
           prevCards.map(card => (randomPair.some(p => p.id === card.id) ? { ...card, open: true } : card)),
         );
       }
+      setIsSuperpowerActive(false);
     }
   };
 
@@ -250,7 +242,11 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         )}
         {status === STATUS_IN_PROGRESS ? <Button onClick={resetGame}>Начать заново</Button> : null}
       </div>
-      <Superpowers onUseSuperpower={handleUseSuperpower} usedSuperpowers={usedSuperpowers} />
+      <Superpowers
+        onUseSuperpower={handleUseSuperpower}
+        usedSuperpowers={usedSuperpowers}
+        disabled={status !== STATUS_IN_PROGRESS || isSuperpowerActive}
+      />
       <div className={styles.cards}>
         {cards.map(card => (
           <Card
