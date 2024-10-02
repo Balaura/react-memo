@@ -1,6 +1,6 @@
 import { CROSS_SUIT, DIAMONDS_SUIT, HEARTS_SUIT, SPADES_SUIT } from "../../const";
 import styles from "./Card.module.css";
-
+import { Button } from "../../components/Button/Button";
 import heartsImageUrl from "./images/hearts.svg";
 import crossImageUrl from "./images/cross.svg";
 import spadesImageUrl from "./images/spades.svg";
@@ -41,9 +41,9 @@ const OpenCard = ({ rank, suit }) => {
 };
 
 const ClosedCard = ({ onClick }) => (
-  <button onClick={onClick} className={cn(styles.card, styles.cardClosed)}>
+  <Button onClick={onClick} className={cn(styles.card, styles.cardClosed)}>
     <img src={cardShirtImageUrl} alt="card shirt" />
-  </button>
+  </Button>
 );
 
 export function Card({ onClick, suit, rank, open }) {

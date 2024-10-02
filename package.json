@@ -13,7 +13,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.15.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "predeploy": "npm run build",
@@ -22,12 +22,15 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "format": "prettier --write .",
-    "lint": "eslint ./src/**/**.jsx ./src/**/**.js"
+    "lint": "eslint ./src/**/**.jsx ./src/**/**.js",
+    "lint:fix": "eslint ./src/**/**.jsx ./src/**/**.js --fix"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-react": "^7.37.0",
     "lefthook": "^1.4.9",
     "prettier": "^3.0.2"
   },
