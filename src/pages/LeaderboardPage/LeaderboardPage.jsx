@@ -88,3 +88,4 @@ function formatTime(seconds) {
   const remainingSeconds = seconds % 60;
   return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
 }
+// странно как-то вышел push, на всякий случай перекоммитила
