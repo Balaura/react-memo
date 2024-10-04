@@ -8,6 +8,7 @@ const ACHIEVEMENTS = {
   1: "Без суперсил",
   2: "Сложный режим",
 };
+
 export function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

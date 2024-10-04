@@ -78,9 +78,6 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     try {
       const response = await fetch(API_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           name,
           time: timer.minutes * 60 + timer.seconds,
